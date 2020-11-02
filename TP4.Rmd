@@ -1,0 +1,50 @@
+---
+title: "Trabajo práctico 3"
+output: html_notebook
+---
+
+Comenzamos prendiendo librerías 
+
+```{r}
+library(tidyverse)
+library(ggforce)
+library(hrbrthemes)
+```
+
+Bajamos base y la guardamos como objeto
+
+```{r}
+vinos <- read_csv("https://raw.githubusercontent.com/cienciadedatos/datos-de-miercoles/master/datos/2019/2019-06-12/vinos.csv")
+```
+
+Podemos agregar algo arriba de como vamos viendo base y decidimos hacer todos los cambios. Reducción de variedad (nos quedamos con el top 10) y mutate precios. 
+
+```{r}
+vinosd <- vinos %>% 
+  group_by(variedad) %>% 
+  filter(n() > 3000) %>% 
+  mutate(puntaje = as.character
+         (cut(puntos, 
+              breaks = c(80, 85, 90, 95, 100), 
+              include.lowest = TRUE, 
+              labels = c('80-85', '86-90', '91-95', '96-100')))) %>% 
+  select(c('variedad', 'puntaje')) %>% 
+  mutate(value = n()) %>% 
+  gather_set_data(1:2)
+```
+
+Hacemos gráfico
+
+```{r}
+ggplot(vinosd, aes(x, id = id, split = y, value = value)) +
+  geom_parallel_sets(aes(fill = variedad), axis.width = 0.2) +
+  geom_parallel_sets_axes(axis.width = 0.2) +
+  geom_parallel_sets_labels(colour = 'purple', angle = 0.5, hjust = 'outward') +
+  labs(title = 'Puntajes obtenidos por vinos reseñados por Wine Enthusiast según variedad', caption = 'Base de datos obtenida de Datos de Miércoles') +
+    theme(legend.position = '', axis.text.y = element_blank())
+  
+
+
+```
+
+
