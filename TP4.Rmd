@@ -1,23 +1,27 @@
 ---
 title: "Trabajo práctico 3"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
+```{r}
+knitr::opts_chunk$set(message = FALSE)
+```
 
 Comenzamos prendiendo librerías 
 
 ```{r}
 library(tidyverse)
 library(ggforce)
-library(hrbrthemes)
 ```
 
-Bajamos base y la guardamos como objeto
+Accedemos a la base vía el link de Datos de Miércoles y la guardamos como objeto
 
 ```{r}
 vinos <- read_csv("https://raw.githubusercontent.com/cienciadedatos/datos-de-miercoles/master/datos/2019/2019-06-12/vinos.csv")
 ```
 
-Podemos agregar algo arriba de como vamos viendo base y decidimos hacer todos los cambios. Reducción de variedad (nos quedamos con el top 10) y mutate precios. 
+Modificamos la base siguiendo dos criterios. En primer lugar, reducimos la cantidad de variedades de vinos que vamos a utilizar para realizar nuestro gráfico. En este sentido, agrupando y filtrando nos quedamos solamente con el top 10 de variedades con más cantidad de vinos reseñados (> 3000). En segundo lugar, la variable continua puntos la volvemos categórica subdividiendola en 4 categorías siguiendo un rango de 5 puntos. Finalmente, generamos la variable value con el conteo de vinos por cada variedad. 
 
 ```{r}
 vinosd <- vinos %>% 
@@ -33,15 +37,25 @@ vinosd <- vinos %>%
   gather_set_data(1:2)
 ```
 
-Hacemos gráfico
+Realizamos gráfico de sets paralelos
 
 ```{r}
 ggplot(vinosd, aes(x, id = id, split = y, value = value)) +
-  geom_parallel_sets(aes(fill = variedad), axis.width = 0.2) +
+  geom_parallel_sets(aes(fill = variedad), 
+                     axis.width = 0.2) +
   geom_parallel_sets_axes(axis.width = 0.2) +
-  geom_parallel_sets_labels(colour = 'purple', angle = 0.5, hjust = 'outward') +
-  labs(title = 'Puntajes obtenidos por vinos reseñados por Wine Enthusiast según variedad', caption = 'Base de datos obtenida de Datos de Miércoles') +
-    theme(legend.position = '', axis.text.y = element_blank())
+  geom_parallel_sets_labels(colour = 'purple', 
+                            angle = 0.5, 
+                            hjust = 'outward') +
+  labs(title = 'Puntajes obtenidos por vinos reseñados en Wine Enthusiast según variedad',
+       subtitle = 'Tomando únicamente variedades con más de 3000 vinos reseñados',
+       caption = 'Base de datos obtenida de Datos de Miércoles') +
+    theme(text = element_text(size = 10), 
+          legend.position = '', 
+          axis.text.y = element_blank(),
+          plot.title = element_text(face = 'bold'), 
+          plot.subtitle = element_text(face = 'italic')
+          ) 
   
 
 
